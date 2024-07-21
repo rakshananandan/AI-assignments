@@ -5,22 +5,22 @@ from keras.models import Sequential
 from keras.layers import LSTM, Dense
 from keras.optimizers import RMSprop
 
-# Load your text data and preprocess it
+
 text = "Your input text here"  # Replace with your text data
 chars = sorted(list(set(text)))
 char_indices = dict((c, i) for i, c in enumerate(chars))
 indices_char = dict((i, c) for i, c in enumerate(chars))
-maxlen = 40  # Length of the input sequence
-step = 3  # Step size for sampling sequences
+maxlen = 40  
+step = 3  s
 
-sentences = []  # Input sequences
-next_chars = []  # Corresponding next characters
+sentences = []  
+next_chars = []
 
 for i in range(0, len(text) - maxlen, step):
     sentences.append(text[i : i + maxlen])
     next_chars.append(text[i + maxlen])
 
-# Vectorize the data
+
 x = np.zeros((len(sentences), maxlen, len(chars), dtype=np.bool)
 y = np.zeros((len(sentences), len(chars), dtype=np.bool)
 
@@ -29,16 +29,16 @@ for i, sentence in enumerate(sentences):
         x[i, t, char_indices[char]] = 1
     y[i, char_indices[next_chars[i]]] = 1
 
-# Build the model
+
 model = Sequential()
 model.add(LSTM(128, input_shape=(maxlen, len(chars)))
 model.add(Dense(len(chars), activation="softmax")
 
-# Compile the model
+
 optimizer = RMSprop(learning_rate=0.01)
 model.compile(loss="categorical_crossentropy", optimizer=optimizer)
 
-# Function to sample the next character
+
 def sample(preds, temperature=1.0):
     preds = np.asarray(preds).astype("float64")
     preds = np.log(preds) / temperature
@@ -46,8 +46,6 @@ def sample(preds, temperature=1.0):
     preds = exp_preds / np.sum(exp_preds)
     probas = np.random.multinomial(1, preds, 1)
     return np.argmax(probas)
-
-# Train the model
 for epoch in range(1, 60):
     print("Epoch", epoch)
     model.fit(x, y, batch_size=128, epochs=1)
